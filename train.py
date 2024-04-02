@@ -209,11 +209,17 @@ for epoch in range(1, n_epochs + 1):
 
         score = logs_valid[metric.name]
 
-        if max_score <= score and epoch >= n_epochs - 30:
-            max_score = score
+        # if max_score <= score and epoch >= n_epochs - 30:
+        #     max_score = score
+        #     torch.save(network.state_dict(),
+        #                os.path.join(WEIGHT_DIR, f"{network_fout}.pth"))
+        #     print("Model saved!")
+        
+        if epoch == 177: # For better reimplementation
             torch.save(network.state_dict(),
                        os.path.join(WEIGHT_DIR, f"{network_fout}.pth"))
             print("Model saved!")
+            break
 
 network.to(device).eval()
 
