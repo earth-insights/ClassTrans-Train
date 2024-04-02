@@ -121,7 +121,6 @@ venv.bak/
 .mypy_cache/
 
 # dev
-data
 results*
 *.pth
 *.bin

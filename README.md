@@ -20,7 +20,6 @@ data
 │   ├── images
 │   └── labels
 |
-|
 └── train.txt
 ```
 
