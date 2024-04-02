@@ -153,7 +153,6 @@ class HybirdLoss(torch.nn.Module):
 
 
 criterion = HybirdLoss().cuda()
-criterion_name = 'CE_DICE'
 metric = source.metrics.IoU2()
 
 parameters = []
