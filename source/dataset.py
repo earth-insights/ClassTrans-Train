@@ -9,7 +9,6 @@ def load_multiband(path):
     src = rasterio.open(path, "r")
     return (np.moveaxis(src.read(), 0, -1)).astype(np.uint8)
 
-
 def load_grayscale(path):
     src = rasterio.open(path, "r")
     return (src.read(1)).astype(np.uint8)

@@ -60,8 +60,6 @@ def label2rgb(a):
     return out
 
 warnings.filterwarnings("ignore")
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
-
 
 OEM_ROOT_TRAIN = "data/"  # Download the 'trainset' and set your data_root to 'trainset' folder
 OEM_DATA_DIR = OEM_ROOT_TRAIN+'trainset/'
@@ -120,19 +118,16 @@ for p in network.parameters():
     if p.requires_grad:
         params += p.numel()
 
-# criterion = source.losses.CEWithLogitsLoss(weights=classes_wt)
 class HybirdLoss(torch.nn.Module):
     def __init__(self):
         super(HybirdLoss, self).__init__()
         self.name = 'CE_DICE'
         self.SCELoss_fn = SoftCrossEntropyLoss(smooth_factor=0.1)
         self.DiceLoss_fn = DiceLoss(mode='multiclass')
-        # self.FocalLoss_fn = FocalLoss(mode='multiclass')
 
     def forward(self, pred, mask):
         loss_sce = self.SCELoss_fn(pred, mask)
         loss_dice = self.DiceLoss_fn(pred, mask)
-        # loss_focal = self.FocalLoss_fn(pred, mask)
         loss = loss_sce + loss_dice
         return loss
 
@@ -165,11 +160,6 @@ print("Number of parameters: ", params)
 
 if torch.cuda.device_count() > 1:
     pass
-    # print("Number of GPUs :", torch.cuda.device_count())
-    # network = torch.nn.DataParallel(network)
-    # optimizer = torch.optim.AdamW(
-    #     [dict(params=network.module.parameters(), lr=learning_rate)]
-    # )
 
 max_score = 0
 train_hist = []
@@ -188,7 +178,6 @@ for epoch in range(1, n_epochs + 1):
       device=device,
   )
   
-
   if epoch % interval == 0 or epoch == n_epochs:
     logs_valid = source.runner.valid_epoch(
         model=network,
@@ -197,22 +186,17 @@ for epoch in range(1, n_epochs + 1):
         dataloader=valid_loader,
         device=device,
     )
-    # train_hist.append(logs_train)
-    # valid_hist.append(logs_valid)
 
     score = logs_valid[metric.name]
 
-    if epoch==177:
-        #max_score = score
-        torch.save(network.state_dict(), os.path.join(WEIGHT_DIR, f"{network_fout}{epoch}.pth"))
+    if max_score <= score and epoch >= n_epochs - 30:
+        max_score = score
+        torch.save(network.state_dict(), os.path.join(WEIGHT_DIR, f"{network_fout}.pth"))
         print("Model saved!")
 
-# load network
-# network.load_state_dict(torch.load(os.path.join(WEIGHT_DIR, f"{network_fout}.pth")))
 network.to(device).eval()
 
-test_pths = glob.glob(TEST_DIR+"/*.tif")
-#testset = source.dataset.Dataset(test_pths, classes=classes, train=False)
+test_pths = glob.glob(TEST_DIR + "/*.tif")
 
 for fn_img in test_pths:
   img = source.dataset.load_multiband(fn_img)

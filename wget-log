@@ -1,4 +1,0 @@
---2024-03-17 23:10:37--  https://cdn-lfs.huggingface.co/repos/2e/f9/2ef9e78fa0524457c88968305ed73c70749777786521454862c2d70d230c564e/4572137af44b2e26f01f638337a59688ec289e9363e15c08dde16640afb86988?response-content-disposition=attachment%3B+filename*%3DUTF-8%27%27open_clip_pytorch_model.bin%3B+filename%3D%22open_clip_pytorch_model.bin%22%3B
-Resolving cdn-lfs.huggingface.co (cdn-lfs.huggingface.co)... 157.240.10.41, 2a03:2880:f12c:83:face:b00c:0:25de
-Connecting to cdn-lfs.huggingface.co (cdn-lfs.huggingface.co)|157.240.10.41|:443... failed: Connection timed out.
-Connecting to cdn-lfs.huggingface.co (cdn-lfs.huggingface.co)|2a03:2880:f12c:83:face:b00c:0:25de|:443... failed: Network is unreachable.
