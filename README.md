@@ -23,9 +23,6 @@ data
 │   ├── images
 │   └── labels
 |
-├── testset
-|   ├── images
-|   └── labels
 |
 └── train.txt
 
