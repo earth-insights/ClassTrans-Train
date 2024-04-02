@@ -41,7 +41,7 @@ python train.py
 
 ### &#x1F4CA; Output
 
-The weights of the model are saved in the weight/ directory, and you can use them in [ClassTrans](https://github.com/earth-insights/ClassTrans).
+The weights of the model are saved in the `weight/` and you can use them in [ClassTrans](https://github.com/earth-insights/ClassTrans/tree/main).
 
 
 
