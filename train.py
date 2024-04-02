@@ -63,7 +63,7 @@ warnings.filterwarnings("ignore")
 os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 
 
-OEM_ROOT_TRAIN = "../data/"  # Download the 'trainset' and set your data_root to 'trainset' folder
+OEM_ROOT_TRAIN = "data/"  # Download the 'trainset' and set your data_root to 'trainset' folder
 OEM_DATA_DIR = OEM_ROOT_TRAIN+'trainset/'
 OEM_DATA_DIR_VAL = OEM_ROOT_TRAIN+'trainset/'
 TEST_DIR = OEM_ROOT_TRAIN+'trainset/images'
@@ -104,37 +104,7 @@ validset = source.dataset.Dataset(val_pths, classes=classes, train=False)
 train_loader = DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=0)
 valid_loader = DataLoader(validset, batch_size=batch_size, shuffle=False, num_workers=0)
 
-# network = get_model(
-#     dict(model_name='UPerNet',
-#          encoder_name='ViT-B-16',
-#          encoder_weights=None,
-#          classes=n_classes))
 
-# checkpoint_path = 'pretrain/FP16-ViT-B-16.pt'
-# network = load_checkpoint('vit', network, checkpoint_path, strict=True)
-
-# network = get_model(
-#     dict(model_name='UPerNet',
-#          encoder_name='convnext_base',
-#          encoder_weights=None,
-#          encoder_depth=4,
-#          classes=n_classes))
-
-# checkpoint_path = 'pretrain/SLFFM_convnext_base.pth'
-# checkpoint_path = 'pretrain/convnext_base_1k_224_ema.pth'
-# network = load_checkpoint('convnext', network, checkpoint_path, strict=False)
-
-# network = get_model(
-#     dict(model_name='UPerNet',
-#          encoder_name='tu-convnext_base.clip_laiona_320',
-#          encoder_weights=None,
-#          encoder_depth=4,
-#          classes=n_classes))
-# checkpoint_path = 'pretrain/open_clip_pytorch_model_convnext-b.bin'
-# network = load_checkpoint('convnext-clip', network, checkpoint_path, strict=True)
-
-
-############################best↓
 network = get_model(
     dict(model_name='UPerNet',
          encoder_name='tu-convnext_large_mlp.clip_laion2b_ft_soup_320',
@@ -143,54 +113,6 @@ network = get_model(
          classes=n_classes))
 checkpoint_path = 'pretrain/open_clip_pytorch_model_convnext-l.bin'
 network = load_checkpoint('convnext-clip', network, checkpoint_path, strict=True)
-
-#########################
-# network = get_model(
-#     dict(model_name='UPerNet',
-#          encoder_name='resnet50',
-#          encoder_weights=None,
-#          encoder_depth=4,
-#          classes=n_classes))
-# checkpoint_path = 'initmodel/resnet50_v2.pth'
-# network = load_checkpoint('resnet50', network, checkpoint_path, strict=True)
-#######################
-#########################
-# network = get_model(
-#     dict(model_name='UPerNet',
-#          encoder_name='resnet101',
-#          encoder_weights=None,
-#          encoder_depth=4,
-#          classes=n_classes))
-# checkpoint_path = 'initmodel/resnet101_v2.pth'
-# network = load_checkpoint('resnet101', network, checkpoint_path, strict=True)
-#######################
-
-# network = get_model(
-#     dict(model_name='UPerNet',
-#          encoder_name='timm-resnest101e',
-#          classes=n_classes))
-
-
-# network = get_model(
-#     dict(model_name='UPerNet',
-#          encoder_name='tu-convnext_xxlarge.clip_laion2b_soup',
-#          encoder_weights=None,
-#          encoder_depth=4,
-#          classes=n_classes))
-# checkpoint_path = 'pretrain/open_clip_pytorch_model_convnext-xxlarge.bin'
-# network = load_checkpoint('convnext-clip', network, checkpoint_path, strict=True)
-
-# use LoRA
-# peft_config = get_peft_config({
-#                 "peft_type": "LORA",
-#                 "r": 16,
-#                 'target_modules': ["fc1", "fc2"],
-#                 "lora_alpha": 32,
-#                 "lora_dropout": 0.05,
-#                 "bias": "none",
-#                 "inference_mode": False,
-#             })
-# network = get_peft_model(network, peft_config)
 
 # count parameters
 params = 0
