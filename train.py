@@ -102,7 +102,6 @@ validset = source.dataset.Dataset(val_pths, classes=classes, train=False)
 train_loader = DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=0)
 valid_loader = DataLoader(validset, batch_size=batch_size, shuffle=False, num_workers=0)
 
-
 network = get_model(
     dict(model_name='UPerNet',
          encoder_name='tu-convnext_large_mlp.clip_laion2b_ft_soup_320',
@@ -166,56 +165,56 @@ train_hist = []
 valid_hist = []
 
 for epoch in range(1, n_epochs + 1):
-  print(f"\nEpoch: {epoch}")
+    print(f"\nEpoch: {epoch}")
 
-  logs_train = source.runner.train_epoch(
-      model=network,
-      optimizer=optimizer,
-      scheduler=scheduler,
-      criterion=criterion,
-      metric=metric,
-      dataloader=train_loader,
-      device=device,
-  )
-  
-  if epoch % interval == 0 or epoch == n_epochs:
-    logs_valid = source.runner.valid_epoch(
+    logs_train = source.runner.train_epoch(
         model=network,
+        optimizer=optimizer,
+        scheduler=scheduler,
         criterion=criterion,
         metric=metric,
-        dataloader=valid_loader,
+        dataloader=train_loader,
         device=device,
     )
 
-    score = logs_valid[metric.name]
+    if epoch % interval == 0 or epoch == n_epochs:
+        logs_valid = source.runner.valid_epoch(
+            model=network,
+            criterion=criterion,
+            metric=metric,
+            dataloader=valid_loader,
+            device=device,
+        )
 
-    if max_score <= score and epoch >= n_epochs - 30:
-        max_score = score
-        torch.save(network.state_dict(), os.path.join(WEIGHT_DIR, f"{network_fout}.pth"))
-        print("Model saved!")
+        score = logs_valid[metric.name]
+
+        if max_score <= score and epoch >= n_epochs - 30:
+            max_score = score
+            torch.save(network.state_dict(), os.path.join(WEIGHT_DIR, f"{network_fout}.pth"))
+            print("Model saved!")
 
 network.to(device).eval()
 
 test_pths = glob.glob(TEST_DIR + "/*.tif")
 
 for fn_img in test_pths:
-  img = source.dataset.load_multiband(fn_img)
-  h, w = img.shape[:2]
-  power = math.ceil(np.log2(h) / np.log2(2))
-  shape = (2 ** power, 2 ** power)
-  img = cv2.resize(img, shape)
+    img = source.dataset.load_multiband(fn_img)
+    h, w = img.shape[:2]
+    power = math.ceil(np.log2(h) / np.log2(2))
+    shape = (2 ** power, 2 ** power)
+    img = cv2.resize(img, shape)
 
-  input = TF.to_tensor(img).unsqueeze(0).float().to(device)
+    input = TF.to_tensor(img).unsqueeze(0).float().to(device)
 
-  pred = []
-  with torch.no_grad():
-      msk = network(input)
-      pred = msk.squeeze().cpu().numpy()
-  pred = pred.argmax(axis=0).astype("uint8")
-  size = pred.shape[0:]
-  y_pr = cv2.resize(pred, (w, h), interpolation=cv2.INTER_NEAREST)
+    pred = []
+    with torch.no_grad():
+        msk = network(input)
+        pred = msk.squeeze().cpu().numpy()
+    pred = pred.argmax(axis=0).astype("uint8")
+    size = pred.shape[0:]
+    y_pr = cv2.resize(pred, (w, h), interpolation=cv2.INTER_NEAREST)
 
-  # save image as png
-  filename = os.path.splitext(os.path.basename(fn_img))[0]
-  y_pr_rgb = label2rgb(y_pr)
-  Image.fromarray(y_pr).save(os.path.join(OUT_DIR, filename+'.png'))
+    # save image as png
+    filename = os.path.splitext(os.path.basename(fn_img))[0]
+    y_pr_rgb = label2rgb(y_pr)
+    Image.fromarray(y_pr).save(os.path.join(OUT_DIR, filename+'.png'))
